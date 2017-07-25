@@ -17,21 +17,21 @@ const options = {
 
 export class KrigingLayer extends maptalks.Layer {
 
-    constructor(id, heats, options) {
-        if (!Array.isArray(heats)) {
-            options = heats;
-            heats = null;
+    constructor(id, interest, options) {
+        if (!Array.isArray(interest)) {
+            options = interest;
+            interest = null;
         }
         super(id, options);
-        this._heats = heats || [];
+        this._interest = interest || [];
     }
 
     getData() {
-        return this._heats;
+        return this._interest;
     }
 
-    setData(heats) {
-        this._heats = heats || [];
+    setData(interest) {
+        this._interest = interest || [];
         return this.redraw();
     }
 
@@ -40,9 +40,9 @@ export class KrigingLayer extends maptalks.Layer {
             return this;
         }
         if (heat[0] && Array.isArray(heat[0])) {
-            maptalks.Util.pushIn(this._heats, heat);
+            maptalks.Util.pushIn(this._interest, heat);
         } else {
-            this._heats.push(heat);
+            this._interest.push(heat);
         }
         return this.redraw();
     }
@@ -67,14 +67,14 @@ export class KrigingLayer extends maptalks.Layer {
     }
 
     isEmpty() {
-        if (!this._heats.length) {
+        if (!this._interest.length) {
             return true;
         }
         return false;
     }
 
     clear() {
-        this._heats = [];
+        this._interest = [];
         this.redraw();
         this.fire('clear');
         return this;
@@ -143,7 +143,25 @@ KrigingLayer.registerJSONType('KrigingLayer');
 KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRenderer {
 
     draw() {
-        K.addd(1, 2);
+        const width = 0.5;
+        const colors = this.layer.options['colors'];
+        const regions = this.layer.options['regions'];
+        const _polygons = this._handRegions(regions);
+        const extent = regions.getExtent();
+        const data = this.layer.getData();
+        const lngs = data.map(function (d) {
+            return d[0];
+        });
+        const lats = data.map(function (d) {
+            return d[1];
+        });
+        const values = data.map(function (d) {
+            return d[2];
+        });
+        const variogram = K.kriging.train(values, lngs, lats, 'exponential', 0, 10);
+        const grid = K.kriging.grid(_polygons, variogram, width);
+        this.prepareCanvas();
+        K.kriging.plot(this.canvas, grid, [extent.xmin, extent.xmax], [extent.ymin, extent.ymax], colors);
         this.completeRender();
     }
 
@@ -158,17 +176,41 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
     }
 
     onResize() {
-        this._heater._width  = this.canvas.width;
-        this._heater._height = this.canvas.height;
+        this._interest._width  = this.canvas.width;
+        this._interest._height = this.canvas.height;
         super.onResize.apply(this, arguments);
     }
 
     onRemove() {
         this.clearHeatCache();
-        delete this._heater;
+        delete this._interest;
     }
 
-    clearHeatCache() {
+    clearInterestCache() {
         delete this._heatViews;
     }
+
+    resizeCanvas() {
+        if (!this.canvas) {
+            return;
+        }
+    }
+
+    clearCanvas() {
+        if (!this.canvas) {
+            return;
+        }
+
+    }
+
+    _handRegions(regions) {
+        const _polygons = regions.getCoordinates().map(function (coords) {
+            return coords.map(function (c) {
+                return [c.x, c.y];
+            });
+        });
+        return _polygons;
+    }
 });
+
+//KrigingLayer.registerRenderer('canvas', KrigingLayer);

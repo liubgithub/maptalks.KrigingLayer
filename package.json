@@ -44,7 +44,7 @@
     "maptalks": "^0.25.0"
   },
   "dependencies": {
-    "kriging": "^0.1.10",
+    "kriging": "^0.1.12",
     "maptalks.heatmap": "^0.5.0",
     "rollup-plugin-babel": "^2.7.1",
     "simpleheat": "^0.4.0"
