@@ -1,5 +1,5 @@
 import * as maptalks from 'maptalks';
-import simpleheat from 'simpleheat';
+import K from 'kriging';
 
 const options = {
     'max' : 1,
@@ -15,7 +15,7 @@ const options = {
     'minOpacity' : 0.05
 };
 
-export class HeatLayer extends maptalks.Layer {
+export class KrigingLayer extends maptalks.Layer {
 
     constructor(id, heats, options) {
         if (!Array.isArray(heats)) {
@@ -81,7 +81,7 @@ export class HeatLayer extends maptalks.Layer {
     }
 
     /**
-     * Export the HeatLayer's JSON.
+     * Export the KrigingLayer's JSON.
      * @return {Object} layer's JSON
      */
     toJSON(options) {
@@ -115,16 +115,16 @@ export class HeatLayer extends maptalks.Layer {
     }
 
     /**
-     * Reproduce a HeatLayer from layer's JSON.
+     * Reproduce a KrigingLayer from layer's JSON.
      * @param  {Object} json - layer's JSON
-     * @return {maptalks.HeatLayer}
+     * @return {maptalks.KrigingLayer}
      * @static
      * @private
      * @function
      */
     static fromJSON(json) {
-        if (!json || json['type'] !== 'HeatLayer') { return null; }
-        return new HeatLayer(json['id'], json['data'], json['options']);
+        if (!json || json['type'] !== 'KrigingLayer') { return null; }
+        return new KrigingLayer(json['id'], json['data'], json['options']);
     }
 
 
@@ -136,48 +136,14 @@ export class HeatLayer extends maptalks.Layer {
     }
 }
 
-HeatLayer.mergeOptions(options);
+KrigingLayer.mergeOptions(options);
 
-HeatLayer.registerJSONType('HeatLayer');
+KrigingLayer.registerJSONType('KrigingLayer');
 
-HeatLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRenderer {
+KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRenderer {
 
     draw() {
-        const map = this.getMap(),
-            layer = this.layer,
-            extent = map.getContainerExtent();
-        let maskExtent = this.prepareCanvas(),
-            displayExtent = extent;
-        if (maskExtent) {
-            maskExtent = maskExtent.convertTo(c => map._pointToContainerPoint(c));
-            //out of layer mask
-            if (!maskExtent.intersects(extent)) {
-                this.completeRender();
-                return;
-            }
-            displayExtent = extent.intersection(maskExtent);
-        }
-
-        if (!this._heater) {
-            this._heater = simpleheat(this.canvas);
-        }
-        this._heater.radius(layer.options['radius'] || this._heater.defaultRadius, layer.options['blur']);
-        if (layer.options['gradient']) {
-            this._heater.gradient(layer.options['gradient']);
-        }
-        this._heater.max(layer.options['max']);
-        //a cache of heat points' viewpoints.
-        if (!this._heatViews) {
-            this._heatViews = [];
-        }
-
-        const heats = layer.getData();
-        if (heats.length === 0) {
-            this.completeRender();
-            return;
-        }
-        const data = this._heatData(heats, displayExtent);
-        this._heater.data(data).draw(layer.options['minOpacity']);
+        K.addd(1, 2);
         this.completeRender();
     }
 
@@ -185,68 +151,6 @@ HeatLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRende
         this.draw();
     }
 
-    _heatData(heats, displayExtent) {
-        const map = this.getMap(),
-            layer = this.layer;
-        const projection = map.getProjection();
-        const data = [],
-            r = this._heater._r,
-            max = layer.options['max'] === undefined ? 1 : layer.options['max'],
-            maxZoom = maptalks.Util.isNil(layer.options['maxZoom']) ? map.getMaxZoom() : layer.options['maxZoom'],
-            v = 1 / Math.pow(2, Math.max(0, Math.min(maxZoom - map.getZoom(), 12))),
-            cellSize = r / 2,
-            grid = [],
-            panePos = map.offsetPlatform(),
-            offsetX = panePos.x % cellSize,
-            offsetY = panePos.y % cellSize;
-        let heat, p, alt, cell, x, y, k;
-        displayExtent = displayExtent.expand(r).convertTo(c => new maptalks.Point(map._containerPointToPrj(c)));
-        this._heatRadius = r;
-        for (let i = 0, l = heats.length; i < l; i++) {
-            heat = heats[i];
-            if (!this._heatViews[i]) {
-                this._heatViews[i] = projection.project(new maptalks.Coordinate(heat[0], heat[1]));
-            }
-            p = this._heatViews[i];
-            if (displayExtent.contains(p)) {
-                p = map._prjToContainerPoint(p);
-                x = Math.floor((p.x - offsetX) / cellSize) + 2;
-                y = Math.floor((p.y - offsetY) / cellSize) + 2;
-
-                alt =
-                    heat.alt !== undefined ? heat.alt :
-                    heat[2] !== undefined ? +heat[2] : 1;
-                k = alt * v;
-
-                grid[y] = grid[y] || [];
-                cell = grid[y][x];
-
-                if (!cell) {
-                    grid[y][x] = [p.x, p.y, k];
-
-                } else {
-                    cell[0] = (cell[0] * cell[2] + (p.x) * k) / (cell[2] + k); // x
-                    cell[1] = (cell[1] * cell[2] + (p.y) * k) / (cell[2] + k); // y
-                    cell[2] += k; // cumulated intensity value
-                }
-            }
-        }
-        for (let i = 0, l = grid.length; i < l; i++) {
-            if (grid[i]) {
-                for (let j = 0, ll = grid[i].length; j < ll; j++) {
-                    cell = grid[i][j];
-                    if (cell) {
-                        data.push([
-                            Math.round(cell[0]),
-                            Math.round(cell[1]),
-                            Math.min(cell[2], max)
-                        ]);
-                    }
-                }
-            }
-        }
-        return data;
-    }
 
     onZoomEnd() {
         delete this._heatViews;

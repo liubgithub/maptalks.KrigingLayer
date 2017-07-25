@@ -1,13 +1,13 @@
 {
-  "name": "maptalks.heatmap",
-  "version": "0.5.0",
-  "description": "A heatmap layer plugin for maptalks.js. ",
+  "name": "maptalks.KrigingLayer",
+  "version": "0.1.0",
+  "description": "A kriging layer plugin for maptalks.js. ",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/maptalks/maptalks.heatmap.git"
+    "url": "https://github.com/maptalks/maptalks.KrigingLayer.git"
   },
-  "main": "dist/maptalks.heatmap.js",
+  "main": "dist/maptalks.KrigingLayer.js",
   "scripts": {
     "preversion": "npm test",
     "version": "gulp minify && git add -A dist",
@@ -44,6 +44,9 @@
     "maptalks": "^0.25.0"
   },
   "dependencies": {
+    "kriging": "^0.1.10",
+    "maptalks.heatmap": "^0.5.0",
+    "rollup-plugin-babel": "^2.7.1",
     "simpleheat": "^0.4.0"
   }
 }
