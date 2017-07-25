@@ -143,7 +143,8 @@ KrigingLayer.registerJSONType('KrigingLayer');
 KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRenderer {
 
     draw() {
-        const width = 0.5;
+        const map = this.layer.getMap();
+        const width = map.getResolution(map.getZoom());
         const colors = this.layer.options['colors'];
         const regions = this.layer.options['regions'];
         const _polygons = this._handRegions(regions);
@@ -212,5 +213,3 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
         return _polygons;
     }
 });
-
-//KrigingLayer.registerRenderer('canvas', KrigingLayer);
