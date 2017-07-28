@@ -144,11 +144,11 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
 
     draw() {
         const map = this.layer.getMap();
-        const width = map.getResolution(map.getZoom());
+        const width = map.getResolution(map.getZoom()) * this.layer.options['ratio'];
         const colors = this.layer.options['colors'];
         const regions = this.layer.options['regions'];
         const _polygons = this._handRegions(regions);
-        const extent = regions.getExtent();
+        const extent = map.getExtent();
         const data = this.layer.getData();
         const lngs = data.map(function (d) {
             return d[0];
@@ -172,13 +172,13 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
 
 
     onZoomEnd() {
-        delete this._heatViews;
+        //delete this._heatViews;
         super.onZoomEnd.apply(this, arguments);
     }
 
     onResize() {
-        this._interest._width  = this.canvas.width;
-        this._interest._height = this.canvas.height;
+        //this._interest._width  = this.canvas.width;
+        //this._interest._height = this.canvas.height;
         super.onResize.apply(this, arguments);
     }
 
