@@ -1,18 +1,18 @@
 import * as maptalks from 'maptalks';
 import K from 'kriging';
 
+/*
+width is the pixel cell's width
+model is the kriging render method,mainly includ 'Gaussian','Exponential',and 'Spherical'
+Gaussian: k(a,b) = w[0] + w[1] * ( 1 - exp{ -( ||a-b|| / range )2 / A } )
+Exponential: k(a,b) = w[0] + w[1] * ( 1 - exp{ -( ||a-b|| / range ) / A } )
+Spherical: k(a,b) = w[0] + w[1] * ( 1.5 * ( ||a-b|| / range ) - 0.5 * ( ||a-b|| / range )3 )
+*/
 const options = {
-    'max' : 1,
-    'gradient' : {
-        0.4: 'blue',
-        0.6: 'cyan',
-        0.7: 'lime',
-        0.8: 'yellow',
-        1.0: 'red'
-    },
-    'radius' : 25,
-    'blur' : 15,
-    'minOpacity' : 0.05
+    width:0.001,
+    model:'exponential',
+    sigma2:0,
+    alpha:10
 };
 
 export class KrigingLayer extends maptalks.Layer {
@@ -144,9 +144,12 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
 
     draw() {
         const map = this.layer.getMap();
-        const width = map.getResolution(map.getZoom()) * this.layer.options['ratio'];
+        const width = this.layer.options['width'];
         const colors = this.layer.options['colors'];
         const regions = this.layer.options['regions'];
+        const model = this.layer.options['model'];
+        const sigma2 = this.layer.options['sigma2'];
+        const alpha = this.layer.options['alpha'];
         const _polygons = this._handRegions(regions);
         const extent = map.getExtent();
         const data = this.layer.getData();
@@ -159,7 +162,7 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
         const values = data.map(function (d) {
             return d[2];
         });
-        const variogram = K.kriging.train(values, lngs, lats, 'exponential', 0, 10);
+        const variogram = K.kriging.train(values, lngs, lats, model, sigma2, alpha);
         const grid = K.kriging.grid(_polygons, variogram, width);
         this.prepareCanvas();
         K.kriging.plot(this.canvas, grid, [extent.xmin, extent.xmax], [extent.ymin, extent.ymax], colors);
