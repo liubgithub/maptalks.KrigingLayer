@@ -167,9 +167,20 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
         this.prepareCanvas();
         K.kriging.plot(this.canvas, grid, [extent.xmin, extent.xmax], [extent.ymin, extent.ymax], colors);
         this.completeRender();
+        this.layer.lastDrawExtent = this.layer.currentDrawExtent;
     }
 
     drawOnInteracting() {
+        const map = this.layer.getMap();
+        const lastDrawExtent = this.layer.lastDrawExtent;
+        const mapExtent = map.getExtent();
+        const regions = this.layer['regions'];
+        const currentDrawExtent = mapExtent.intersection(regions);
+        this.layer.currentDrawExtent = currentDrawExtent;
+        if (currentDrawExtent.equals(lastDrawExtent)) {
+            this.completeRender();
+            return;
+        }
         this.draw();
     }
 
@@ -205,6 +216,22 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
             return;
         }
 
+    }
+
+    _isDrawextentChanged() {
+
+    }
+
+    _isContains(polygon) {
+        const drawExtent = polygon.getExtent();
+        let result = false;
+        const map = this.layer.getMap();
+        const mapExtent = map.getExtent();
+        const intersection = mapExtent.intersection(drawExtent);
+        if (intersection.equals(drawExtent)) {
+            result = true;
+        }
+        return result;
     }
 
     _handRegions(regions) {
