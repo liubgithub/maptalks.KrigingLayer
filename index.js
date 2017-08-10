@@ -143,6 +143,7 @@ KrigingLayer.registerJSONType('KrigingLayer');
 KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRenderer {
 
     draw() {
+        if (!this._drawIfOut()) return;
         const map = this.layer.getMap();
         const width = this.layer.options['width'];
         const colors = this.layer.options['colors'];
@@ -167,23 +168,24 @@ KrigingLayer.registerRenderer('canvas', class extends maptalks.renderer.CanvasRe
         this.prepareCanvas();
         K.kriging.plot(this.canvas, grid, [extent.xmin, extent.xmax], [extent.ymin, extent.ymax], colors);
         this.completeRender();
-        this.layer.lastDrawExtent = this.layer.currentDrawExtent;
     }
 
     drawOnInteracting() {
-        const map = this.layer.getMap();
-        const lastDrawExtent = this.layer.lastDrawExtent;
-        const mapExtent = map.getExtent();
-        const regions = this.layer['regions'];
-        const currentDrawExtent = mapExtent.intersection(regions);
-        this.layer.currentDrawExtent = currentDrawExtent;
-        if (currentDrawExtent.equals(lastDrawExtent)) {
-            this.completeRender();
-            return;
-        }
         this.draw();
     }
 
+    _drawIfOut() {
+        const map = this.layer.getMap();
+        const mapExtent = map.getExtent();
+        const regions = this.layer.options['regions'];
+        const regionExtent = regions.getExtent();
+        const currentDrawExtent = mapExtent.intersection(regionExtent);
+        if (currentDrawExtent.equals(regionExtent)) {
+            this.completeRender();
+            return false;
+        }
+        return true;
+    }
 
     onZoomEnd() {
         //delete this._heatViews;
