@@ -5,11 +5,11 @@
 
 A maptalks Layer to draw spatial data in a way of providing spatial prediction and mapping capabilities via the ordinary kriging algorithm.
 
-![screenshot](https://cloud.githubusercontent.com/assets/13678919/25623191/1d7f9b44-2f89-11e7-9c33-b4346478a685.jpg)
+![screenshot](https://liubgithub.github.io/archives/kriging/screenshot.png)
 
 ## Examples
 
-* [Animated lines of migration in China](https://liubgithub.github.io/archives/kriging/). (inspired by [oeo4b](https://github.com/oeo4b/kriging.js))
+* [Lintong ,Xi'an's kriging map](https://liubgithub.github.io/archives/kriging/). (inspired by [oeo4b](https://github.com/oeo4b/kriging.js))
 * [the world of kriging map](http://oeo4b.github.io).
 
 ## Install
