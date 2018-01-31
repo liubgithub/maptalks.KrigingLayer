@@ -15,7 +15,7 @@ A maptalks Layer to draw spatial data in a way of providing spatial prediction a
 ## Install
   
 * Install with npm: ```npm install maptalks.KrigingLayer```. 
-* Download from [dist directory](https://github.com/maptalks/maptalks.KrigingLayer/tree/gh-pages/dist).
+* Download from [dist directory](https://github.com/maptalks/maptalks.KrigingLayer/tree/master/dist).
 * Use unpkg CDN: ```https://unpkg.com/maptalks.KrigingLayer/dist/maptalks.KrigingLayer.min.js```
 
 ## Usage
