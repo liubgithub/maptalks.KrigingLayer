@@ -33,8 +33,7 @@ As a plugin, ```maptalks.KrigingLayer``` must be loaded after ```maptalks.js``` 
     var polygon = new maptalks.Polygon(regions);
     var krigingLayer = new maptalks.KrigingLayer('kriging', samples, {
         colors: colors,
-        regions: polygon,
-        ratio:5
+        regions: polygon
     });
 </script>
 ```
@@ -44,13 +43,13 @@ IE 9-11, Chrome, Firefox, other modern and mobile browsers.
 
 ## API Reference
 
-```KrigingLayer``` is a subclass of [maptalks.Layer](https://maptalks.github.io/docs/api/Layer.html) and inherits all the methods of its parent.
+```KrigingLayer``` is a subclass of [maptalks.Layer](http://maptalks.org/api.maptalks.org/master/Layer.html) and inherits all the methods of its parent.
 
 ### `Constructor`
 
 ```javascript
-// data's format
-// [{ coordinates : [[x, y], [x, y]], symbol : {..} }, { coordinates : [[x, y], [x, y]], symbol : {..} } ..]
+// samples's format
+//[[x,y,value], [x,y,value] ..]
 // symbol only supports lineWidth and lineColor
 new maptalks.KrigingLayer(id, samples, options)
 ```
