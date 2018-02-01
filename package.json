@@ -1,5 +1,5 @@
 {
-  "name": "maptalks.KrigingLayer",
+  "name": "maptalks.kriginglayer",
   "version": "0.1.0",
   "description": "A kriging layer plugin for maptalks.js. ",
   "license": "MIT",

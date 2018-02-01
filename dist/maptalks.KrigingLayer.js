@@ -1,10 +1,10 @@
 /*!
- * maptalks.KrigingLayer v0.1.0
+ * maptalks.kriginglayer v0.1.0
  * LICENSE : MIT
  * (c) 2016-2018 maptalks.org
  */
 /*!
- * requires maptalks@^0.25.0 
+ * requires maptalks@^0.37.0 
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('maptalks')) :
@@ -564,6 +564,14 @@ var KrigingLayer = function (_maptalks$Layer) {
         return this;
     };
 
+    KrigingLayer.prototype.setModel = function setModel(model) {
+        if (model instanceof String) {
+            this.options['model'] = model;
+            return this.redraw();
+        }
+        return this;
+    };
+
     KrigingLayer.prototype.redraw = function redraw() {
         var renderer$$1 = this._getRenderer();
         if (renderer$$1) {
@@ -757,6 +765,6 @@ exports.KrigingLayer = KrigingLayer;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-typeof console !== 'undefined' && console.log('maptalks.KrigingLayer v0.1.0, requires maptalks@^0.25.0.');
+typeof console !== 'undefined' && console.log('maptalks.kriginglayer v0.1.0, requires maptalks@^0.37.0.');
 
 })));
