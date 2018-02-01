@@ -45,6 +45,14 @@ export class KrigingLayer extends maptalks.Layer {
         return this;
     }
 
+    setModel(model) {
+        if (model instanceof String) {
+            this.options['model'] = model;
+            return this.redraw();
+        }
+        return this;
+    }
+
     redraw() {
         const renderer = this._getRenderer();
         if (renderer) {

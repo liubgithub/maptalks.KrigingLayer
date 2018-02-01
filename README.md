@@ -9,7 +9,7 @@ A maptalks Layer to draw spatial data in a way of providing spatial prediction a
 
 ## Examples
 
-* [Lintong ,Xi'an's kriging map](https://liubgithub.github.io/archives/kriging/). (inspired by [oeo4b](https://github.com/oeo4b/kriging.js))
+* [Lintong ,Xi'an's kriging map](https://liubgithub.github.io/archives/kriging/). (inspired by [oeo4b](https://github.com/oeo4b/kriging.js)).In this example,the red points are the predict sample points.
 * [the world of kriging map](http://oeo4b.github.io).
 
 ## Install
@@ -76,6 +76,14 @@ get layer's data
 set new data to the layer
 
 * data **Object[]** new predict points
+
+**Returns** `this`
+
+### `setModel(model)`
+
+set new model to the kriging render method
+
+* model **String** render method
 
 **Returns** `this`
 
