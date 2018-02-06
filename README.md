@@ -1,7 +1,7 @@
 # maptalks.KrigingLayer
 
-[![CircleCI](https://circleci.com/gh/maptalks/maptalks.KrigingLayer/tree/master.svg?style=shield)](https://circleci.com/gh/maptalks/maptalks.KrigingLayer)
-[![NPM Version](https://img.shields.io/npm/v/maptalks.KrigingLayer.svg)](https://github.com/maptalks/maptalks.KrigingLayer)
+[![CircleCI](https://circleci.com/gh/liubgithub/maptalks.KrigingLayer/tree/master.svg?style=shield)](https://circleci.com/gh/liubgithub/maptalks.KrigingLayer)
+[![NPM Version](https://img.shields.io/npm/v/maptalks.KrigingLayer.svg)](https://github.com/liubgithub/maptalks.KrigingLayer)
 
 A maptalks Layer to draw spatial data in a way of providing spatial prediction and mapping capabilities via the ordinary kriging algorithm.
 
